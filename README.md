@@ -45,3 +45,18 @@ Model can then be [run](https://www.tensorflow.org/lite/guide/inference#load_and
 TFLite is a module within Tensorflow so is included in EDEN 3.0, although it's quite an old version (TF 2.4.2). I assume this might change later.
 
 tf.keras.experimental.preprocessing layers (in particular, the crop/resize) are still part of the TFLite model.
+
+
+## Dev Note - Conda/Eden
+
+Add Eden channel
+
+    conda config --add channels https://condaread:euclid_2020@codeen-repo.euclid-ec.org/nexus/repository/conda-euclid
+
+Check available
+
+    conda search -c https://condaread:euclid_2020@codeen-repo.euclid-ec.org/nexus/repository/conda-euclid --override-channels
+
+Install as needed (but eden appears to be old on the channel?)
+
+    conda install eden
