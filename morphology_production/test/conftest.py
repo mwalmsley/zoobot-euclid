@@ -12,7 +12,7 @@ def prepared_image():
     return np.random.rand(1, 300, 300, 1).astype(np.float32)
 
 @pytest.fixture()
-def catalog_radii():
+def catalog_radius():
     return 42
 
 @pytest.fixture()

@@ -3,7 +3,7 @@ import numpy as np
 from skimage.transform import resize
 
 
-def prepare_image(image, catalog_radii):
+def prepare_image(image, catalog_radius):
     # TODO any other simple preprocessing specific to ML
     # TODO obviously this isn't optimised for speed
 
