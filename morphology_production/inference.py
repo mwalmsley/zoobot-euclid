@@ -54,7 +54,7 @@ def load_and_predict(image, model_path):
     # The function `get_tensor()` returns a copy of the tensor data.
     # Use `tensor()` in order to get a pointer to the tensor.
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    return output_data
+    return output_data[0]  # 0 to remove batch index
 
 
 def main():

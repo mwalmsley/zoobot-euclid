@@ -1,45 +1,47 @@
 # zoobot-euclid
 Minimal Zoobot (or other) ML model for Euclid pipeline
 
-Euclid presumably won't want to have an ML server running (even though this would be much faster). So can't use TF Serving.
+This repo has two halves.
+- ``morphology_production`` is the production code to measure detailed morphology in the Euclid pipeline.
+- ``morphology_development`` creates a static dependency (the frozen ML model) for ``morphology_production``. It need not be installed or run Euclid-side. 
+
+## Production Installation
+
+``morphology_production`` depends only on numpy, TensorFlow, and scikit-image, all already included in EDEN 3.0. 
+
+You will need the frozen ML model (``example_zoobot.tflite``) and optionally the example FITS images. Download from [Dropbox](https://www.dropbox.com/sh/4dz0vc980zi1s24/AACWGqcSJNbE4Igj0Q7vXTXca?dl=0).
+
+## Production Use
+
+``morphology_production`` includes ``entrypoint.py``, copied below. This illustrates the expected API.
+
+    from morphology_production import inference
+
+    def measure_morphology(fits_image, catalog_radii, model_path='models/zoobot_example.tflite'):
+        ml_ready_image = inference.prepare_image(fits_image, catalog_radii)
+        return inference.load_and_predict(ml_ready_image, model_path)
+
+<!-- ## Development Installation
+
+``morphology_development`` requires Zoobot and other standard PyData packages. It cannot be run within EDEN. -->
+
+## Dev Note - Why TFLite?
+
+
+
+Euclid presumably won't want to have an ML server running (even though this would be faster). So can't use TF Serving.
 
 Fully loading TensorFlow/model for every galaxy will probably be too slow to do tens of millions of times. 
 
 Instead, plan on using Tensorflow Lite (TFLite).
 
-SavedModel can be converted to TFLite: https://www.tensorflow.org/lite/api_docs/python/tf/lite/TFLiteConverter
+SavedModel can be [converted to TFLite](https://www.tensorflow.org/lite/api_docs/python/tf/lite/TFLiteConverter).
 
     converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
     tflite_model = converter.convert()
 
-Model can then be run in Python, requiring only tf.lite.Interpreter import:
-
-    import numpy as np
-    import tensorflow as tf
-
-    # Load the TFLite model and allocate tensors.
-    interpreter = tf.lite.Interpreter(model_path="converted_model.tflite")
-    interpreter.allocate_tensors()
-
-    # Get input and output tensors.
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    # Test the model on random input data.
-    input_shape = input_details[0]['shape']
-    input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
-    interpreter.set_tensor(input_details[0]['index'], input_data)
-
-    interpreter.invoke()
-
-    # The function `get_tensor()` returns a copy of the tensor data.
-    # Use `tensor()` in order to get a pointer to the tensor.
-    output_data = interpreter.get_tensor(output_details[0]['index'])
-    print(output_data)
-
-
-https://www.tensorflow.org/lite/guide/inference#load_and_run_a_model_in_python
+Model can then be [run](https://www.tensorflow.org/lite/guide/inference#load_and_run_a_model_in_python) in Python, requiring only tf.lite.Interpreter import
 
 TFLite is a module within Tensorflow so is included in EDEN 3.0, although it's quite an old version (TF 2.4.2). I assume this might change later.
 
-Any pre-processing will not happen - that will need to be separate (standard) Python. But for inference, we don't need augmentations, so only minimal pre-processing required.
+tf.keras.experimental.preprocessing layers (in particular, the crop/resize) are still part of the TFLite model.
