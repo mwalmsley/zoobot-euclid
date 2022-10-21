@@ -151,6 +151,15 @@ def create_plots(image, seg, catalogue):
 
 def prepare_image(image, seg, catalogue, idx, mode='seg', m=1.5):
     # Prepares the image for the model, either by using the segmentation map or the major axis
+    # INPUT PARAMETERS
+    # image (numpy array M x M): The image from which the cutout will be extracted
+    # seg (numpy array M x M): The segmentation map
+    # catalogue (pandas DataFrame): The catalogue containing the parameters of the objects
+    # idx (int): The index of the object to be extracted (from 0 to the length of the catalogue)
+    # mode (str): The mode to be used for the cutout extraction. Either 'seg' or 'maj'
+    # m (float): The factor to be used for the major axis cutout extraction
+    # OUTPUTS
+    # cutout (numpy array 300 x 300): The cutout of the image
     params = extract_params_by_idx(catalogue, idx)
     if mode == 'seg':
         cutout = get_cut_from_idxs(seg, image, params[-1])
