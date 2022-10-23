@@ -39,16 +39,20 @@ def main():
     # model_path = 'models/dummy_mnist.tflite'
     model_path = 'models/zoobot_example.tflite'
 
-    catalogue_path = 'data/example_tile/EUC_MER_FINAL-CUTOUTS-CAT_TILE100158586-2F9FF9_20220829T221845.491503Z_00.00.fits'
-    mosaic_path = 'data/example_tile/EUC_MER_BGSUB-MOSAIC-VIS_TILE100158586-863FA9_20220829T190315.054985Z_00.00.fits'
-    segmentation_path = 'data/example_tile/EUC_MER_FINAL-SEGMAP_TILE100158586-CB5786_20220829T221845.491530Z_00.00.fits' 
-    
-    # Loading and preprocessing data
-    image, seg, catalogue = cutouts.load_data_for_mosaic(catalogue_path, segmentation_path, mosaic_path)
-    # selecting a random source from the catalogue
-    idx = np.random.randint(0, len(catalogue)) 
-    cutout = cutouts.prepare_image(image, seg, catalogue, idx, mode='seg', m=1.5)
-    print(cutout.shape)
+    # catalogue_path = 'data/example_tile/EUC_MER_FINAL-CUTOUTS-CAT_TILE100158586-2F9FF9_20220829T221845.491503Z_00.00.fits'
+    # mosaic_path = 'data/example_tile/EUC_MER_BGSUB-MOSAIC-VIS_TILE100158586-863FA9_20220829T190315.054985Z_00.00.fits'
+    # segmentation_path = 'data/example_tile/EUC_MER_FINAL-SEGMAP_TILE100158586-CB5786_20220829T221845.491530Z_00.00.fits' 
+
+    # # Loading and preprocessing data
+    # image, seg, catalogue = cutouts.load_data_for_mosaic(catalogue_path, segmentation_path, mosaic_path)
+
+    # # selecting a random source from the catalogue
+    # idx = np.random.randint(0, len(catalogue)) 
+    # cutout = cutouts.prepare_image(image, seg, catalogue, idx, mode='seg', m=1.5)
+    # print(cutout.shape)
+
+    cutout = np.random.rand(12, 300, 300, 1).astype(np.float32)
+
     prediction = load_and_predict(cutout, model_path)
     print(prediction)
     print(prediction.shape)
