@@ -14,37 +14,46 @@ def prepare_image(image, seg, catalog, source_index, mode='seg', m=1.5, resized_
     # catalog (pandas DataFrame): The catalog containing the parameters of the sources
     # source_index (int): The index of the source to be extracted (from 0 to the length of the catalog)
     # mode (str): The mode to be used for the cutout extraction. Either 'seg' or 'maj'
-    # m (float): The factor to be used for the major axis cutout extraction
+    # m (float): The factor to be used for the major axis cutout extraction. Deprecated TODO
     # OUTPUTS
     # cutout (numpy array resized_cutout_size x resized_cutout_size): The cutout of the image
 
     # catalog column values for the source
     # TODO only read the required columns, and read here directly
-    params = extract_params_by_source_index(catalog, source_index)
+    galaxy = catalog.iloc[source_index]
     if mode == 'seg':
-        # changed from params[-1]
+        # changed from galaxy[-1]
         # SEG_ID is the source index in the segmentation map
-        cutout = get_cutout_from_seg_map(seg, image, source_index=params['SEG_ID'])
-    elif mode == 'maj':
-        ellipse_axes = params[['SEMIMAJOR_AXIS', 'SEMIMINOR_AXIS']].values
-        
-        # find the array indices enclosed by an ellipse  
-        # - with those axes
-        # - centered on the x, y array indices of the source center
-        rows, cols = draw.ellipse(r=params['x'], c=params['y'], 
-                                  r_radius=m * ellipse_axes[0], 
-                                  c_radius=m * ellipse_axes[1], shape=seg.shape)
 
-        # create a segmentation map with 1 inside the ellipse and 0 elsewhere
-        dummy_segmentation_map = np.zeros_like(seg)
-        dummy_segmentation_map[cols, rows] = 1
-        # can then (re-)use get_cutout_from_seg_map to retrieve a cutout around the ellipse
-        cutout = get_cutout_from_seg_map(dummy_segmentation_map, image, source_index=1)
+        # DEPRECATED - np.where is slow, we already know the cutout edges from catalog corners
+        # cutout = get_cutout_from_seg_map(seg, image, source_index=galaxy['SEG_ID'])
+
+        cutout = get_cutout(image, galaxy)  # remembering that image is the full mosaic
+
+    # DEPRECATED - segmentation maps seem to work about as well, and not all sources are shaped like ellipses
+    # if re-implementing, do not use get_cutout_from_seg_map/np.where, instead use rows, cols directly
+    # elif mode == 'maj':
+    #     ellipse_axes = galaxy[['SEMIMAJOR_AXIS', 'SEMIMINOR_AXIS']].values
+        
+    #     # find the array indices enclosed by an ellipse  
+    #     # - with those axes
+    #     # - centered on the x, y array indices of the source center
+    #     rows, cols = draw.ellipse(r=galaxy['x'], c=galaxy['y'], 
+    #                               r_radius=m * ellipse_axes[0], 
+    #                               c_radius=m * ellipse_axes[1], shape=seg.shape)
+
+    #     # create a segmentation map with 1 inside the ellipse and 0 elsewhere
+    #     dummy_segmentation_map = np.zeros_like(seg)
+    #     dummy_segmentation_map[cols, rows] = 1
+    #     # can then (re-)use get_cutout_from_seg_map to retrieve a cutout around the ellipse
+    #     cutout = get_cutout_from_seg_map(dummy_segmentation_map, image, source_index=1)
+
     else:
         raise ValueError(mode)
 
+    # log scaling (temp)
+    cutout = np.log10(1+cutout)
     # rescale from 0 to 1
-    # cutout = np.log10(cutout)
     cutout =  (cutout - cutout.min()) / (cutout.max() - cutout.min())
 
     # resize to desired output size
@@ -97,13 +106,58 @@ def prepare_df(catalog, header):
         ['CORNER_3_RA', 'CORNER_3_DEC']], 0)
     return catalog
 
-def extract_params_by_source_index(catalog, source_index):
-    # Extracts the parameters for a given source_index
-    return catalog.iloc[source_index, :][['OBJECT_ID', 'x', 'y', 'x0', 'y0', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3',
-                                     'SEMIMAJOR_AXIS', 'SEMIMINOR_AXIS', 'SEG_ID']]
+def get_cutout(mosaic: np.ndarray, galaxy: pd.Series) -> np.ndarray:
+    """
+    Get square cutout from mosaic around galaxy, based on segmentation-calculated corners
+    Expands both axis to largest axis (width or height)
+
+    Args:
+        mosaic (np.ndarray): _description_
+        galaxy (pd.Series): including x0, ...x3, y0...y3 listing indices of corner pixels of source (anti-clockwise from bottom right)
+
+    Returns:
+        np.ndarray: _description_
+    """
+    # read and round to nearest int
+    x0 = galaxy['x0'].astype(int)
+    x1 = galaxy['x1'].astype(int)
+    y0 = galaxy['y0'].astype(int)
+    y3 = galaxy['y3'].astype(int)
+
+    # TODO might precalculate these for speed. But should be trivially quick.
+    x_width = x1 - x0
+    y_height = y3 - y0
+
+    # force both to be even number of pixels
+    if x_width % 2 == 1:
+        x1 += 1  # expand right, always
+        x_width += 1 
+    if y_height % 2 == 1:
+        y3 += 1  # expand up, always
+        y_height += 1 
+
+    # TODO could perhaps refactor this
+    if x_width >= y_height:  # long axis is x
+        x_slice = slice(x0, x1)
+        y_midpoint = y0 + y_height//2  # y_height is even so will still be int
+        y_slice = slice(y_midpoint-x_width//2, y_midpoint+x_width//2)  # similarly
+    else:  # long axis is y
+        # similarly
+        y_slice = slice(y0, y3)
+        x_midpoint = x0 + x_width//2  
+        x_slice = slice(x_midpoint-y_height//2, x_midpoint+y_height//2)  # similarly
+
+    # print(x_slice, y_slice)
+
+    cutout = mosaic[y_slice, x_slice]
+    assert cutout.shape[0] == cutout.shape[1]
+    
+    return cutout
+
 
 def get_cutout_from_seg_map(seg: np.ndarray, image: np.ndarray, source_index: int):
     """
+    DEPRECATED
     Extracts the indexes from the segmentation map and returns the squared cutout
 
     Args:
