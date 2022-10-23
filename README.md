@@ -47,7 +47,18 @@ TFLite is a module within Tensorflow so is included in EDEN 3.0, although it's q
 tf.keras.experimental.preprocessing layers (in particular, the crop/resize) are still part of the TFLite model.
 
 
-## Dev Note - Conda/Eden
+## Dev Note - Environment
+
+Run on EDEN 3.0 with [Dockeen](https://euclid.roe.ac.uk/projects/codeen-users/wiki/LODEEN_DOCKEEN_IDE) (redmine login required)
+
+    docker login gitlab.euclid-sgs.uk:4567
+    docker run -it --name dockeen --privileged gitlab.euclid-sgs.uk:4567/st-tools/ct_xodeen_builder/dockeen
+
+gitlab credentials are the same as cas.cosmos. You can also use an [API token](https://euclid.roe.ac.uk/issues/20384) if needed.
+
+### Do Not Use Conda
+
+EDEN is not available on Conda (except perhaps locally at ESA?). Only an old version is available:
 
 Add Eden channel
 
