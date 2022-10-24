@@ -58,8 +58,8 @@ def main():
 
     # keras SavedModel
     # model_path = os.path.join(repo_dir, 'data/models/zoobot_example')  # 2.10
-    model_path = os.path.join(repo_dir, 'data/models/zoobot_latest')  # 2.10
-    # model_path = os.path.join(repo_dir, 'data/models/zoobot_example_eden')  # 2.4.1
+    # model_path = os.path.join(repo_dir, 'data/models/zoobot_latest')  # 2.10
+    model_path = os.path.join(repo_dir, 'data/models/zoobot_eden')  # 2.4.1
 
     # tflite-converted
     # model_path = repo_dir / 'data/models/dummy_mnist.tflite'

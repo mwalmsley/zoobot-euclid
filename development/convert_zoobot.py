@@ -45,11 +45,11 @@ def main():
         include_optimizer=False
     )
 
-    converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
-    tflite_model = converter.convert()
-    # save as .tflite
-    with open(tfline_model_path, 'wb') as f:
-        f.write(tflite_model)
+    # converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_dir)
+    # tflite_model = converter.convert()
+    # # save as .tflite
+    # with open(tfline_model_path, 'wb') as f:
+    #     f.write(tflite_model)
 
     
 
