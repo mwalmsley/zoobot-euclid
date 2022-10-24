@@ -69,6 +69,20 @@ Inside the container:
     pip install --user -e zoobot-euclid
     python zoobot-euclid/euclid_morphology/inference.py
 
+To remake the model
+
+    pip install --user -e zoobot-euclid
+    python zoobot-euclid/development/convert_zoobot.py
+
+
+## Dev Note - TF Versions
+
+Zoobot is trained on TF 2.8+. The current version is 2.10. EDEN uses TF 2.4.1. Models trained on TF 2.8 and converted with TFLite cannot be loaded in 2.4.1 (throws a helpful error). So either:
+
+- Model must be trained and exported to TFLite in 2.4.1. Pray training is still possible. Current attempt.
+- Model can be trained in TF 2.8+ and used as-is in 2.4.1, perhaps. Pray can be used as-is.
+- Make EDEN change request to upgrade TF (unclear if any other projects are using it?)
+
 ### Do Not Use Conda
 
 EDEN is not available on Conda (except perhaps locally at ESA?). Only an old version is available:

@@ -9,7 +9,7 @@ RUN ["which", "python"]
 WORKDIR /home/user/zoobot-euclid
 
 # added in .bashrc
-RUN eden.3.0
+# CMD eden.3.0
 
 # RUN pip3 install --user -e /home/user/zoobot-euclid
 

@@ -1,4 +1,4 @@
-from os import getpid
+import os
 import tensorflow as tf
 
 # imports not needed for Euclid
@@ -8,10 +8,12 @@ from pytorch_galaxy_datasets.prepared_datasets import DecalsDR5Dataset
 
 def main():
 
-    saved_model_dir = 'models/zoobot_example'
-    tfline_model_path = 'models/zoobot_example.tflite'
+    repo_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    dataset = DecalsDR5Dataset(root='/nvme1/scratch/walml/repos/_data/decals_dr5', download=False)
+    saved_model_dir = os.path.join(repo_dir, 'data/models/zoobot_example_eden')
+    tfline_model_path = os.path.join(repo_dir, 'data/models/zoobot_example_eden.tflite')
+
+    dataset = DecalsDR5Dataset(root=os.path.join(repo_dir, 'data/decals_dr5'), download=False)
     dr5_catalog = dataset.catalog
     adjusted_catalog = dr5_catalog.sample(1000)
 
@@ -22,7 +24,7 @@ def main():
     model = train_with_keras.train(
         catalog=adjusted_catalog,
         schema=schema,
-        save_dir='models/zoobot_temp_training',
+        save_dir=os.path.join(repo_dir, 'data/models/zoobot_eden_training'),
         batch_size=16,
         epochs=1,
         gpus=0,
