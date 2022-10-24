@@ -60,7 +60,10 @@ gitlab credentials are the same as cas.cosmos. You can also use an [API token](h
 
 Run in interactive mode with zoobot-euclid attached as a bindmount (-v) so it has the latest code and data available
 
-    docker run --name dev -it --rm --privileged -v /Users/walml/repos/zoobot-euclid:/home/user/zoobot-euclid zoobot-euclid
+    docker run --name dev -it --rm --privileged \
+        -v /Users/walml/repos/zoobot-euclid:/home/user/zoobot-euclid \
+        -v ~/.docker_cvmfs_cache:/var/lib/cvmfs \
+        zoobot-euclid
 
 For production use, would add directly into the Dockerfile. But data is large.
 
@@ -68,6 +71,8 @@ Inside the container:
 
     pip install --user -e zoobot-euclid
     python zoobot-euclid/euclid_morphology/inference.py
+
+    <!-- http://ct-devws.pages.euclid-sgs.uk/PVPhase/tutorialcreatingpf/content/lodeen.html -->
 
 ### Do Not Use Conda
 
