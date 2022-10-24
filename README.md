@@ -56,6 +56,19 @@ Run on EDEN 3.0 with [Dockeen](https://euclid.roe.ac.uk/projects/codeen-users/wi
 
 gitlab credentials are the same as cas.cosmos. You can also use an [API token](https://euclid.roe.ac.uk/issues/20384) if needed.
 
+    doocker build -tag zoobot-euclid .
+
+Run in interactive mode with zoobot-euclid attached as a bindmount (-v) so it has the latest code and data available
+
+    docker run --name dev -it --rm --privileged -v /Users/walml/repos/zoobot-euclid:/home/user/zoobot-euclid zoobot-euclid
+
+For production use, would add directly into the Dockerfile. But data is large.
+
+Inside the container:
+
+    pip install --user -e zoobot-euclid
+    python zoobot-euclid/euclid_morphology/inference.py
+
 ### Do Not Use Conda
 
 EDEN is not available on Conda (except perhaps locally at ESA?). Only an old version is available:

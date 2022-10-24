@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import tensorflow as tf
 import numpy as np
 import matplotlib
@@ -36,8 +39,11 @@ def load_and_predict(image, model_path):
 
 def main():
 
-    # model_path = 'models/dummy_mnist.tflite'
-    model_path = 'models/zoobot_example.tflite'
+
+    repo_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+    # model_path = repo_dir / 'data/models/dummy_mnist.tflite'
+    model_path = os.path.join(repo_dir, 'data/models/zoobot_example.tflite')
 
     # catalogue_path = 'data/example_tile/EUC_MER_FINAL-CUTOUTS-CAT_TILE100158586-2F9FF9_20220829T221845.491503Z_00.00.fits'
     # mosaic_path = 'data/example_tile/EUC_MER_BGSUB-MOSAIC-VIS_TILE100158586-863FA9_20220829T190315.054985Z_00.00.fits'
