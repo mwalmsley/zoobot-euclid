@@ -19,16 +19,16 @@ import numpy as np
 
 def np_to_ascii(x: np.ndarray, precision=np.float16) -> str:
     assert x.ndim == 1
-    as_bytes = x.astype(np.float16).tobytes()  # C-order by default
+    as_bytes = x.astype(precision).tobytes()  # C-order by default
     as_encoded_bytes = base64.b64encode(as_bytes)
     # as_encoded_bytes = base64.a85encode(as_bytes)
     as_ascii = as_encoded_bytes.decode('utf-8')
     return as_ascii
 
 
-def ascii_to_np(x: str) -> np.ndarray:
+def ascii_to_np(x: str, precision=np.float16) -> np.ndarray:
     as_bytes = base64.b64decode(x.encode('utf-8'))
-    as_np = np.frombuffer(as_bytes, dtype=np.float16).astype(np.float32)
+    as_np = np.frombuffer(as_bytes, dtype=precision).astype(np.float32)
     assert as_np.ndim == 1
     return as_np
 
