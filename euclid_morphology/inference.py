@@ -56,8 +56,14 @@ def main():
 
     repo_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+    # keras SavedModel
+    # model_path = os.path.join(repo_dir, 'data/models/zoobot_example')  # 2.10
+    model_path = os.path.join(repo_dir, 'data/models/zoobot_latest')  # 2.10
+    # model_path = os.path.join(repo_dir, 'data/models/zoobot_example_eden')  # 2.4.1
+
+    # tflite-converted
     # model_path = repo_dir / 'data/models/dummy_mnist.tflite'
-    model_path = os.path.join(repo_dir, 'data/models/zoobot_example.tflite')
+    # model_path = os.path.join(repo_dir, 'data/models/zoobot_example.tflite')
 
     # catalogue_path = 'data/example_tile/EUC_MER_FINAL-CUTOUTS-CAT_TILE100158586-2F9FF9_20220829T221845.491503Z_00.00.fits'
     # mosaic_path = 'data/example_tile/EUC_MER_BGSUB-MOSAIC-VIS_TILE100158586-863FA9_20220829T190315.054985Z_00.00.fits'
@@ -73,7 +79,9 @@ def main():
 
     cutout = np.random.rand(12, 300, 300, 1).astype(np.float32)
 
-    prediction = load_and_predict(cutout, model_path)
+    prediction = load_and_predict_full(cutout, model_path)
+    # prediction = load_and_predict(cutout, model_path)
+
     print(prediction)
     print(prediction.shape)
 
