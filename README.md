@@ -72,10 +72,24 @@ Inside the container:
     pip install --user -e zoobot-euclid
     python zoobot-euclid/euclid_morphology/inference.py
 
-To remake the model
+To remake the model on TF 2.4.1, clone the repos below using tf-2.4 branches, then:
 
-    pip install --user -e zoobot-euclid
-    python zoobot-euclid/development/convert_zoobot.py
+<!--         -u $(id -u):$(id -g) \ -->
+
+<!-- docker volume create pip -->
+<!-- pip install --user torchvision pytorch_lightning simplejpeg keras_applications matplotlib pandas scikit-learn tensorflow_probability==0.12.2;  -->
+
+<!--  pip install --user torchvision pytorch_lightning simplejpeg keras_applications matplotlib pandas scikit-learn tensorflow_probability==0.12.2;  -->
+
+    docker build -tag conversion -f Dockerfile.conversion .
+
+    docker run --name conversion -it --rm --privileged \
+        -v /Users/walml/repos/zoobot-euclid:/home/user/zoobot-euclid \
+        -v /Users/walml/repos/zoobot:/home/user/zoobot \
+        -v /Users/walml/repos/pytorch-galaxy-datasets:/home/user/pytorch-galaxy-datasets \
+        conversion
+
+    cd home/user;pip install --user --no-deps -e zoobot; pip install --user --no-deps -e pytorch-galaxy-datasets; pip install --user -e zoobot-euclid; python zoobot-euclid/development/convert_zoobot.py
 
 ## Dev Note - TF Versions
 

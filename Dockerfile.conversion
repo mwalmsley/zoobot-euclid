@@ -1,0 +1,13 @@
+FROM tensorflow/tensorflow:2.4.1
+
+# done in stages in casae of failures
+
+# pytorch-galaxy-datassets, now with nicer imports
+RUN pip install --user torch==1.10.1 torchvision==0.11.2 simplejpeg
+
+# zoobot, with tfp version set to match TF 2.4.1
+RUN pip install --user keras_applications tensorflow_probability==0.12.2 
+
+# generic (for zoobot)
+# TODO check pyarrow for Zoobot
+RUN pip install --user matplotlib pandas scikit-learn pyarrow

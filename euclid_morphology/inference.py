@@ -8,6 +8,20 @@ matplotlib.rcParams.update({'font.size': 16})
 
 from euclid_morphology import cutouts
 
+def load_and_predict_full(image, model_path) -> np.ndarray:
+    """
+    
+
+    Args:
+        image (_type_): _description_
+        model_path (str): to folder including saved_model.pb (includes architecture)
+
+    Returns:
+        np.ndarray: _description_
+    """
+
+    model = tf.keras.models.load_model(model_path)
+    return model.predict(image)
 
 def load_and_predict(image, model_path):
     # model_path must be converted to .tflite
