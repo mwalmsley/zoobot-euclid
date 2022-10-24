@@ -69,8 +69,7 @@ For production use, would add directly into the Dockerfile. But data is large.
 
 Inside the container:
 
-    pip install --user -e zoobot-euclid
-    python zoobot-euclid/euclid_morphology/inference.py
+    pip install --user -e zoobot-euclid; python zoobot-euclid/euclid_morphology/inference.py
 
 To remake the model on TF 2.4.1, clone the repos below using tf-2.4 branches, then:
 
